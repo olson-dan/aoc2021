@@ -11,40 +11,60 @@ fn day1_input(s: &str) -> Vec<usize> {
 
 #[aoc(day1, part1)]
 fn day1_part1(input: &[usize]) -> usize {
-    input.windows(2).filter(|x| x[0] < x[1]).count()
+    input.windows(2).filter(|x| x[1] > x[0]).count()
 }
 
 #[aoc(day1, part2)]
 fn day1_part2(input: &[usize]) -> usize {
-    let input = input.windows(3).map(|x| x.iter().sum()).collect::<Vec<_>>();
-    day1_part1(&input)
+    input.windows(4).filter(|x| x[3] > x[0]).count()
 }
 
-/*
 #[aoc_generator(day2)]
-fn day2_input(s: &str) -> Vec<usize> {
+fn day2_input(s: &str) -> Vec<(String, isize)> {
     s.trim()
         .lines()
-        .map(|x| x.parse::<usize>().unwrap())
+        .map(|x| {
+            let mut x = x.split(|c: char| c.is_whitespace());
+            (
+                x.next().unwrap().to_string(),
+                x.next().unwrap().parse::<isize>().unwrap(),
+            )
+        })
         .collect()
 }
 
 #[aoc(day2, part1)]
-fn day2_part1(input: &[usize]) -> usize {
-    let mut answer = 0;
-    for x in input.windows(2) {
-        if x[1] > x[0] {
-            answer += 1;
+fn day2_part1(input: &[(String, isize)]) -> isize {
+    let mut h = 0;
+    let mut d = 0;
+    for x in input {
+        match x.0.as_ref() {
+            "forward" => h += x.1,
+            "down" => d += x.1,
+            "up" => d -= x.1,
+            _ => unreachable!(),
         }
     }
-    answer
+    h * d
 }
 
 #[aoc(day2, part2)]
-fn day2_part2(input: &[usize]) -> usize {
-    let input = input.windows(3).map(|x| x.iter().sum()).collect::<Vec<_>>();
-    day2_part1(&input)
+fn day2_part2(input: &[(String, isize)]) -> isize {
+    let mut h = 0;
+    let mut d = 0;
+    let mut a = 0;
+    for x in input {
+        match x.0.as_ref() {
+            "forward" => {
+                h += x.1;
+                d += a * x.1;
+            }
+            "down" => a += x.1,
+            "up" => a -= x.1,
+            _ => unreachable!(),
+        }
+    }
+    h * d
 }
-*/
 
 aoc_lib! { year = 2021 }
