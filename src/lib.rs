@@ -169,4 +169,111 @@ fn day3_part2(input: &[String]) -> usize {
     ox * co2
 }
 
+#[derive(Default, Clone)]
+struct Board {
+    values: Vec<Option<usize>>,
+}
+
+impl Board {
+    fn won(&self) -> bool {
+        let horiz = [0..5, 5..10, 10..15, 15..20, 20..25];
+        // horiz
+        for range in horiz {
+            if self.values[range].iter().all(|x| matches!(x, None)) {
+                return true;
+            }
+        }
+        // vertical
+        for x in 0..5 {
+            if self
+                .values
+                .iter()
+                .enumerate()
+                .filter(|(i, _)| *i % 5 == x)
+                .all(|(_, x)| matches!(x, None))
+            {
+                return true;
+            }
+        }
+        false
+    }
+
+    fn kill(&mut self, number: usize) {
+        for x in self.values.iter_mut() {
+            if matches!(x, Some(n) if *n == number) {
+                *x = None;
+                return;
+            }
+        }
+    }
+}
+
+#[derive(Clone)]
+struct Bingo {
+    boards: Vec<Board>,
+    numbers: Vec<usize>,
+}
+
+#[aoc_generator(day4)]
+fn day4_input(s: &str) -> Bingo {
+    let mut lines = s.trim().lines();
+    let numbers = lines
+        .next()
+        .unwrap()
+        .split(',')
+        .map(|x| x.parse::<usize>().unwrap())
+        .collect();
+    let mut boards = Vec::new();
+    while let Some(_) = lines.next() {
+        let mut board = Board::default();
+        for _ in 0..5 {
+            board.values.extend(
+                lines
+                    .next()
+                    .unwrap()
+                    .trim()
+                    .split_whitespace()
+                    .map(|x| Some(x.parse::<usize>().unwrap())),
+            );
+        }
+        boards.push(board);
+    }
+    Bingo { boards, numbers }
+}
+
+#[aoc(day4, part1)]
+fn day4_part1(input: &Bingo) -> usize {
+    let mut input = input.clone();
+    for x in input.numbers.into_iter() {
+        for board in input.boards.iter_mut() {
+            board.kill(x);
+            if board.won() {
+                let sum: usize = board.values.iter().filter_map(|x| x.as_ref()).sum();
+                return x * sum;
+            }
+        }
+    }
+    unreachable!();
+}
+
+#[aoc(day4, part2)]
+fn day4_part2(input: &Bingo) -> usize {
+    let mut input = input.clone();
+    let mut last = false;
+    for x in input.numbers.into_iter() {
+        for board in input.boards.iter_mut() {
+            board.kill(x);
+            if last && board.won() {
+                let sum: usize = board.values.iter().filter_map(|x| x.as_ref()).sum();
+                return x * sum;
+            }
+        }
+        input.boards.retain(|x| !x.won());
+        if input.boards.len() == 1 {
+            last = true;
+        }
+    }
+    unreachable!();
+}
+
 aoc_lib! { year = 2021 }
