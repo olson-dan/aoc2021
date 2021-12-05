@@ -1,5 +1,5 @@
 use aoc_runner_derive::{aoc, aoc_generator, aoc_lib};
-//use std::collections::HashMap;
+use std::collections::HashMap;
 
 #[aoc_generator(day1)]
 fn day1_input(s: &str) -> Vec<usize> {
@@ -274,6 +274,83 @@ fn day4_part2(input: &Bingo) -> usize {
         }
     }
     unreachable!();
+}
+
+#[aoc_generator(day5)]
+fn day5_input(s: &str) -> Vec<(isize, isize, isize, isize)> {
+    s.trim()
+        .lines()
+        .map(|x| {
+            let mut it = x.split(" -> ");
+            let mut a = it.next().unwrap().split(',');
+            let mut b = it.next().unwrap().split(',');
+            (
+                a.next().unwrap().parse::<isize>().unwrap(),
+                a.next().unwrap().parse::<isize>().unwrap(),
+                b.next().unwrap().parse::<isize>().unwrap(),
+                b.next().unwrap().parse::<isize>().unwrap(),
+            )
+        })
+        .collect()
+}
+
+#[aoc(day5, part1)]
+fn day5_part1(input: &[(isize, isize, isize, isize)]) -> usize {
+    let mut map: HashMap<(isize, isize), isize> = HashMap::new();
+    for inp in input.into_iter() {
+        let (x1, y1, x2, y2) = *inp;
+        if x1 == x2 {
+            for y in std::cmp::min(y1, y2)..=std::cmp::max(y1, y2) {
+                *map.entry((x1, y)).or_default() += 1;
+            }
+        } else if y1 == y2 {
+            for x in std::cmp::min(x1, x2)..=std::cmp::max(x1, x2) {
+                *map.entry((x, y1)).or_default() += 1;
+            }
+        }
+    }
+    map.iter().filter(|(_, v)| **v > 1).count()
+}
+
+#[aoc(day5, part2)]
+fn day5_part2(input: &[(isize, isize, isize, isize)]) -> usize {
+    let mut map: HashMap<(isize, isize), isize> = HashMap::new();
+    for inp in input.into_iter() {
+        let (x1, y1, x2, y2) = *inp;
+        if x1 == x2 {
+            for y in std::cmp::min(y1, y2)..=std::cmp::max(y1, y2) {
+                *map.entry((x1, y)).or_default() += 1;
+            }
+        } else if y1 == y2 {
+            for x in std::cmp::min(x1, x2)..=std::cmp::max(x1, x2) {
+                *map.entry((x, y1)).or_default() += 1;
+            }
+        } else {
+            let xstep = if x1 < x2 { 1 } else { -1 };
+            let ystep = if y1 < y2 { 1 } else { -1 };
+            let mut x = x1;
+            let mut y = y1;
+            loop {
+                *map.entry((x, y)).or_default() += 1;
+                if (x, y) == (x2, y2) {
+                    break;
+                }
+                x += xstep;
+                y += ystep;
+            }
+        }
+    }
+    map.iter().filter(|(_, v)| **v > 1).count()
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    fn day5() {
+        let input = vec![(1, 1, 3, 3), (9, 7, 7, 9)];
+        assert_eq!(12, day5_part2(&input));
+    }
 }
 
 aoc_lib! { year = 2021 }
