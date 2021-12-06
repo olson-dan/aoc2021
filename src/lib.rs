@@ -343,14 +343,59 @@ fn day5_part2(input: &[(isize, isize, isize, isize)]) -> usize {
     map.iter().filter(|(_, v)| **v > 1).count()
 }
 
+#[aoc_generator(day6)]
+fn day6_input(s: &str) -> Vec<usize> {
+    let s = s.trim().lines().next().unwrap();
+    s.split(',').map(|x| x.parse::<usize>().unwrap()).collect()
+}
+
+#[aoc(day6, part1)]
+fn day6_part1(input: &[usize]) -> usize {
+    let days = 80;
+    let mut count = 0;
+    let mut input = input.to_vec();
+    for x in input.iter_mut() {
+        count += 1; // self
+        let mut spawn_nine = [0usize; 9];
+        let mut spawn_seven = [0usize; 7];
+        spawn_seven[*x] = 1;
+        for _ in 0..days {
+            spawn_seven[0] += spawn_nine[0];
+            let spawned = spawn_seven[0];
+            spawn_seven.rotate_left(1);
+            spawn_nine.rotate_left(1);
+            spawn_nine[8] = spawned;
+            count += spawned;
+        }
+    }
+    count
+}
+
+#[aoc(day6, part2)]
+fn day6_part2(input: &[usize]) -> usize {
+    let days = 256;
+    let mut count = 0;
+    let mut input = input.to_vec();
+    for x in input.iter_mut() {
+        count += 1; // self
+        let mut spawn_nine = [0usize; 9];
+        let mut spawn_seven = [0usize; 7];
+        spawn_seven[*x] = 1;
+        for _ in 0..days {
+            spawn_seven[0] += spawn_nine[0];
+            let spawned = spawn_seven[0];
+            spawn_seven.rotate_left(1);
+            spawn_nine.rotate_left(1);
+            spawn_nine[8] = spawned;
+            count += spawned;
+        }
+    }
+    count
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
-    #[test]
-    fn day5() {
-        let input = vec![(1, 1, 3, 3), (9, 7, 7, 9)];
-        assert_eq!(12, day5_part2(&input));
-    }
 }
 
 aoc_lib! { year = 2021 }
