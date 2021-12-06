@@ -356,16 +356,12 @@ fn day6_part1(input: &[usize]) -> usize {
     let mut input = input.to_vec();
     for x in input.iter_mut() {
         count += 1; // self
-        let mut spawn_nine = [0usize; 9];
-        let mut spawn_seven = [0usize; 7];
-        spawn_seven[*x] = 1;
+        let mut spawn = [0usize; 9];
+        spawn[*x] = 1;
         for _ in 0..days {
-            spawn_seven[0] += spawn_nine[0];
-            let spawned = spawn_seven[0];
-            spawn_seven.rotate_left(1);
-            spawn_nine.rotate_left(1);
-            spawn_nine[8] = spawned;
-            count += spawned;
+            count += spawn[0];
+            spawn.rotate_left(1);
+            spawn[6] += spawn[8];
         }
     }
     count
@@ -378,16 +374,12 @@ fn day6_part2(input: &[usize]) -> usize {
     let mut input = input.to_vec();
     for x in input.iter_mut() {
         count += 1; // self
-        let mut spawn_nine = [0usize; 9];
-        let mut spawn_seven = [0usize; 7];
-        spawn_seven[*x] = 1;
+        let mut spawn = [0usize; 9];
+        spawn[*x] = 1;
         for _ in 0..days {
-            spawn_seven[0] += spawn_nine[0];
-            let spawned = spawn_seven[0];
-            spawn_seven.rotate_left(1);
-            spawn_nine.rotate_left(1);
-            spawn_nine[8] = spawned;
-            count += spawned;
+            count += spawn[0];
+            spawn.rotate_left(1);
+            spawn[6] += spawn[8];
         }
     }
     count
