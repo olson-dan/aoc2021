@@ -353,8 +353,7 @@ fn day6_input(s: &str) -> Vec<usize> {
 fn day6_part1(input: &[usize]) -> usize {
     let days = 80;
     let mut count = 0;
-    let mut input = input.to_vec();
-    for x in input.iter_mut() {
+    for x in input {
         count += 1; // self
         let mut spawn = [0usize; 9];
         spawn[*x] = 1;
@@ -371,8 +370,7 @@ fn day6_part1(input: &[usize]) -> usize {
 fn day6_part2(input: &[usize]) -> usize {
     let days = 256;
     let mut count = 0;
-    let mut input = input.to_vec();
-    for x in input.iter_mut() {
+    for x in input {
         count += 1; // self
         let mut spawn = [0usize; 9];
         spawn[*x] = 1;
