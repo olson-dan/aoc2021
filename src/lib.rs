@@ -383,9 +383,53 @@ fn day6_part2(input: &[usize]) -> usize {
     count
 }
 
+#[aoc_generator(day7)]
+fn day7_input(s: &str) -> Vec<isize> {
+    s.trim()
+        .split(',')
+        .map(|x| x.parse::<isize>().unwrap())
+        .collect()
+}
+
+#[aoc(day7, part1)]
+fn day7_part1(input: &[isize]) -> usize {
+    let mut fuels: Vec<isize> = Vec::new();
+    for x in input {
+        fuels.push(input.iter().map(|y| (*y - *x).abs()).sum());
+    }
+    let min = fuels.iter().min().unwrap();
+    fuels[fuels.iter().position(|x| *x == *min).unwrap()] as usize
+}
+
+#[aoc(day7, part2)]
+fn day7_part2(input: &[isize]) -> usize {
+    let mut fuels: Vec<isize> = Vec::new();
+    let min = *input.iter().min().unwrap() as usize;
+    let max = *input.iter().max().unwrap() as usize;
+    for x in min..max {
+        fuels.push(
+            input
+                .iter()
+                .map(|y| {
+                    let n = (*y - x as isize).abs();
+                    (n * (n + 1)) / 2
+                })
+                .sum(),
+        );
+    }
+    let min = fuels.iter().min().unwrap();
+    fuels[fuels.iter().position(|x| *x == *min).unwrap()] as usize
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
+    #[test]
+    fn day7() {
+        let input = vec![16isize, 1, 2, 0, 4, 2, 7, 1, 2, 14];
+        assert_eq!(day7_part1(&input), 37);
+        assert_eq!(day7_part2(&input), 168);
+    }
 }
 
 aoc_lib! { year = 2021 }
